@@ -1,78 +1,74 @@
+/*Michael Rodriguez M
+* Calidad, Verificacion y Validacion del software
+* Universidad Cenfotec
+* Laboratorio #1
+* Revisión por la compañera: Liz Montero
+* R2_V1 - 110623 ' 10:00am
+* */
+
 import logo from './logo.svg';
 import './App.css';
 import {useState} from "react";
 
 function App() {
 
-    const [transformedNumber, setTransformedNumber] = useState('');
     const [number, setNumber] = useState('');
     const [base, setBase] = useState('');
+    const [finalNum, setFinalNum] = useState('')
 
-    const baseToChar = (base) => {
-        const baseChars = '0123456789abcdefghijklmnopqrstuvwxyz';
-        if (base === 10) {
-            return baseChars;
-        }
-        const baseLength = base.toString().length;
-        const baseMap = Array.from({ length: baseLength }, (_, i) => {
-            return i.toString();
-        });
-        return baseMap.join('');
+    /*Obtiene el numero a transformar*/
+    const handleNumberChange = (event) => {
+        const decimalValue = parseInt(event.target.value, 10);
+        setNumber(event.target.value);
+        console.log(number);
     };
 
-    const handleInputChange = (event) => {
-        console.log("here"+transformedNumber);
-        const { name, value } = event.target;
-
-        if (name === 'number') {
-            setNumber(value);
-        } else if (name === 'base') {
-            setBase(value);
-        }
-        let newBase = 0;
-
-        if (newBase === 0 || isNaN(newBase)) {
-            return;
-        }
-
-        const transformed = (num) => {
-            let result = '';
-            while (num > 0) {
-                const remainder = num % newBase;
-                result = baseToChar(newBase) + result;
-                num = Math.floor(num / newBase);
-            }
-            return result;
-        };
-
-        const transformedValue = transformed(parseInt(value, 10));
-        console.log(transformedValue);
-        setTransformedNumber(transformedValue);
+    /*Obtiene la base deseada*/
+    const handleBaseChange = (event) => {
+        setBase(event.target.value);
     };
+
+    /*Realiza la conversión del numero*/
+    function decimalToBase(number, base) {
+        const digits = [];
+        while (number !== 0) {
+            const remainder = number % base;
+            digits.unshift(remainder);
+            number = Math.floor(number / base);
+        }
+        return digits.join("");
+    }
+
+    /*Funcion que se ejecuta con el botón*/
+    function convertNumber(){
+        const convertedValue = decimalToBase(number, base);
+        setFinalNum(convertedValue);
+    }
 
     return (
     <div className="App">
       <header></header>
       <main>
         <div className="container-md">
-          <p>Transform a number Base 10 into any</p>
-          <p>Number to be used</p>
+          <p>Transformar un número de base 10 a otra</p>
+          <p>Número a usar</p>
           <input
               type="number"
               name="number"
               value={number}
-              onChange={(e) => handleInputChange(e)}
+              onChange={(e) => handleNumberChange(e)}
               data-number={number}
           />
-          <p>Base to be transformed</p>
+          <p>Base deseada</p>
           <input
               type="number"
               name="base"
               value={base}
-              onChange={(e) => handleInputChange(e)}
+              onChange={(e) => handleBaseChange(e)}
               data-base={base}
           />
-        <p>Transformed Number: {transformedNumber}</p>
+        <div><button onClick={convertNumber}>Convert</button></div>
+        <p>Número final: {finalNum}</p>
         </div>
       </main>
       <footer></footer>
